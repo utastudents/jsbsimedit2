@@ -1,9 +1,0 @@
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\app\Main.java
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\core\domain\CanvasModel.java
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\core\domain\NodeModel.java
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\io\layout\LayoutIO.java
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\io\xml\JsbsimXmlRepository.java
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\ui\dnd\CanvasPanel.java
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\ui\dnd\NodeView.java
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\ui\dnd\PaletteBar.java
-C:\Users\cody3\dev\local_jsbsimedit2\src\utastudents\jsbsimedit2\ui\shell\ShellFrame.java

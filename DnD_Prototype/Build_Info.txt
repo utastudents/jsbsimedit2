@@ -1,5 +1,5 @@
 # How to build Prototype from terminal
-# *Skip STEP 1* -unless files are added or renamed 
+# *Do STEP 1 one time* -unless files are added or renamed 
 # *cd into parent directory of /src
 
 # Linux/macOS
