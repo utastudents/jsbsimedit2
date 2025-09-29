@@ -1,0 +1,24 @@
+# How to build Prototype from terminal
+# *Skip STEP 1* -unless files are added or renamed 
+# *cd into parent directory of /src
+
+# Linux/macOS
+# 1) Generate list of source files *(Only needed when files are added/renamed)
+find src -name "*.java" > sources.txt
+
+# 2) Compile
+javac -d out @sources.txt
+
+# 3) Run the main class
+java -cp out utastudents.jsbsimedit2.app.Main
+
+
+# PowerShell
+# 1) Generate list of source files *(Only needed when files are added/renamed)
+Get-ChildItem -Recurse -Path .\src -Filter *.java | Select-Object -ExpandProperty FullName | Set-Content -Encoding ascii .\sources.txt
+
+# 2) Compile
+javac --% -d out @sources.txt
+
+# 3) Run the main class
+java -cp out utastudents.jsbsimedit2.app.Main
