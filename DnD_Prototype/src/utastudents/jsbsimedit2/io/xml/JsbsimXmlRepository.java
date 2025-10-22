@@ -9,5 +9,8 @@ import utastudents.jsbsimedit2.core.domain.CanvasModel;
 //   XML data as a fallback if there is no sidecar for the loaded XML file
 
 public interface JsbsimXmlRepository {
+CanvasModel loadLayout(File file) throws Exception;
+
+    void saveLayout(CanvasModel model, File file) throws Exception;
 
 }
