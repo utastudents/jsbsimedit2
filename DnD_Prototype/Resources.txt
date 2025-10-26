@@ -1,0 +1,12 @@
+Important APIs for Drag-n-Drop:
+
+Abstract Window Toolkit
+https://docs.oracle.com/javase/8/docs/api/java/awt/package-summary.html
+
+Swing
+https://docs.oracle.com/javase/tutorial/uiswing/index.html
+
+* Swing is built on-top of awt and extends their classes, so;
+* Don't mix components, use Swing components only when there is a component for both.
+      (i.e., use JFrame, not Frame)
+* awt is used for event handling and some graphics.
