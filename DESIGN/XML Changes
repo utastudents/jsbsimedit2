@@ -1,0 +1,62 @@
+The Changes that were made from the Old XML to the New XML for the F16
+-- Here Are Some Changes From the First 400 Lines of the differences between the Old and New XML files for the F16 --
+
+An XML Stylesheet was added
+<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?> – OLD
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?> xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd"> – NEW
+
+Metrics
+In the old XML in the metrics - wing_incidence was removed in the new XML 
+New Location named ‘VRP’ has its value x changed from 0 to -180.
+
+Mass & Balance 
+Added a true append to negated_crossproduct_inertia in the mass_balance class. 
+Not much other change, 
+
+Ground Reactions 
+For NOSE_LG, the spring_coeff is changed from 15000 -> 17250.
+For NOSE_LG, the damping_coeff is changed from 5000 -> 4250.
+For LEFT_MLG, the spring_coeff is changed from 22704-> 37500.
+For LEFT_MLG,  the damping_coeff is changed from 10000-> 7500.
+For LEFT_WT, RIGHT_WT, TOP_VS, LEFT_VFT, RIGHT_VFT, INTAKE, and RADOME - have all had fields (max_steer, brake_group, and retractable) removed. 
+
+External Reactions 
+New section added that wasnt in the old XML file named external_reactions.
+Within there are two new forces for frame = ‘BODY’, being pushback and hook which both include location and direction. 
+*New behavior to implement 
+
+Propulsion
+Old XML had engine-level location and orient fields. 
+But leaves these two for thrusters only, with some of the feed lines being changed. 
+Tanks remain unchanged. 
+
+Systems 
+New entries being system file = ‘pushback’ , and ‘hook’
+Seems to match with the above Enternal Reactions 
+Pushback has three new property items.
+Was not in the old XML structure. 
+Need to ensure these are handled since they are new
+
+Flight Control System
+The old XML had one interface property - fcs/alpha-norm
+New XML includes fcs/hook-engage, fcs/canopy-engage, fcs/fbw-override
+Many channels were added in the new XML which were not present in the old XML such as - Flaps, Yaw, Landing Gear, Leading Edge Flap, Throttle, Speedbrake, Hook, Canopy
+Within the Roll channel, these were the changes 
+Within the old XML, the separate fields pure_gain, integrator, lead_lag_filter, and form PIDs. 
+The new XML uses a single <pid> block with a <switch> trigger, making the gains slightly different, 
+The Pitch channel was almost entirely changed.
+Old XML had P+I+D for pure/integrator/lead_lag, path
+New XML added gravity correction, alpha limiting, speed gating switch, <pid> for g-load, richer kinematics, and aerosurface ranges. 
+The other changes for some of the other new channels that weren't as major - 
+Flaps - adds schedule + kinematics traverse 
+Yaw - adds schedule normalization, PID, and aerosurface mapping 
+Landing Gear - adds WOW logic and kinematic timing, scheduled steering
+Leading Edge Flap - logic with multiple conditional tests and aerosurface scaling
+Speedbrake - alpha/speed guard, scheduled limiter, kinematic to degrees, and normalization 
+Hook - kinematics with timings and triggers
+Canopy - kinematics with timings and triggers
+
+Aerodynamics 
+New file starts filling aero functions
+Old snippet ends mid-Roll channel; no aero shown there, so we can’t line-by-line compare further here.
+

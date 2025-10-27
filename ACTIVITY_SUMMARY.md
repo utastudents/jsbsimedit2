@@ -2,7 +2,7 @@
 
 At this stage, our group has set up project repository and confirmed access. 
 
-Thanh Ho - wrote the requirements specification scheme, and uploaded it. Will change if needed by team
+Thanh Ho - Created requirement cards - enough to start, still a work-in-progress. 
 
 Haneen - Worked on UI documentation scheme 
 
