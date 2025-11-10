@@ -2,6 +2,19 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.util.HashMap;
+
+
+
+
 
 public class Model {
 
@@ -92,4 +105,116 @@ public class Model {
             edges.add(new Edge(from, to));
         }
     }
+    //  Depth first search
+    public List<Node> dfs(Node start) {
+        List<Node> visited = new ArrayList<>();
+        dfsVisit(start, visited);
+        return visited;
+    }
+
+    private void dfsVisit(Node n, List<Node> visited) {
+        if (n == null || visited.contains(n))
+            return;
+
+        visited.add(n);
+
+        // Follow outgoing edges
+        for (Edge e : edges) {
+            if (e.from == n) {
+                dfsVisit(e.to, visited);
+            }
+        }
+    }
+
+
+        // SAVE GRAPH TO XML 
+    public void saveToXML(File file) throws Exception {
+        // Pick a root node: first node if nothing specified
+        Node root = nodes.isEmpty() ? null : nodes.get(0);
+        List<Node> ordered = root == null ? new ArrayList<>() : dfs(root);
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.newDocument();
+
+        Element graph = doc.createElement("Graph");
+        doc.appendChild(graph);
+
+        // Save nodes in DFS order
+        for (Node n : ordered) {
+            Element nodeEl = doc.createElement("Node");
+            nodeEl.setAttribute("id", String.valueOf(n.id));
+            nodeEl.setAttribute("type", n.type.label);
+            nodeEl.setAttribute("x", String.valueOf(n.bounds.x));
+            nodeEl.setAttribute("y", String.valueOf(n.bounds.y));
+            graph.appendChild(nodeEl);
+        }
+
+        // Save edges separately
+        for (Edge e : edges) {
+            Element edgeEl = doc.createElement("Edge");
+            edgeEl.setAttribute("from", String.valueOf(e.from.id));
+            edgeEl.setAttribute("to", String.valueOf(e.to.id));
+            graph.appendChild(edgeEl);
+        }
+
+        // Write file
+        Transformer tf = TransformerFactory.newInstance().newTransformer();
+        tf.setOutputProperty(OutputKeys.INDENT, "yes");
+        tf.transform(new DOMSource(doc), new StreamResult(file));
+    }
+
+
+        // LOAD GRAPH FROM XML
+    public void loadFromXML(File file) throws Exception {
+        nodes.clear();
+        edges.clear();
+        nextId = 1;
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.parse(file);
+
+        NodeList nodeList = doc.getElementsByTagName("Node");
+
+        // 1. Load nodes
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Element el = (Element) nodeList.item(i);
+
+            int id = Integer.parseInt(el.getAttribute("id"));
+            String type = el.getAttribute("type");
+            int x = Integer.parseInt(el.getAttribute("x"));
+            int y = Integer.parseInt(el.getAttribute("y"));
+
+            NodeType t = NodeType.fromLabel(type);
+            Node n = new Node(id, t, x, y);
+
+            nodes.add(n);
+            nextId = Math.max(nextId, id + 1);
+        }
+
+        // Build a lookup table for edges
+        Map<Integer, Node> map = new HashMap<>();
+        for (Node n : nodes)
+            map.put(n.id, n);
+
+        // 2. Load edges
+        NodeList edgeList = doc.getElementsByTagName("Edge");
+        for (int i = 0; i < edgeList.getLength(); i++) {
+            Element el = (Element) edgeList.item(i);
+
+            int from = Integer.parseInt(el.getAttribute("from"));
+            int to = Integer.parseInt(el.getAttribute("to"));
+
+            Node nf = map.get(from);
+            Node nt = map.get(to);
+
+            if (nf != null && nt != null)
+                edges.add(new Edge(nf, nt));
+        }
+    }
+
+
+
+
 }
