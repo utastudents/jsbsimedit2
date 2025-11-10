@@ -18,6 +18,12 @@ import javax.swing.JScrollPane;
 import javax.swing.TransferHandler;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JFileChooser;
+
+
 
 public class Controller {
 
@@ -30,6 +36,8 @@ public class Controller {
         scrollPane.getVerticalScrollBar().setBlockIncrement(100);
 
         JFrame f = new JFrame("JSBSim Edit - DnD Prototype");
+        f.setJMenuBar(buildMenuBar(f, model, view));
+
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setLayout(new BorderLayout());
 
@@ -198,5 +206,50 @@ public class Controller {
                 return false;
             }
         }
+ 
     }
+
+
+// ---------------- Menu Bar: Save / Load XML ----------------
+private static JMenuBar buildMenuBar(JFrame frame, Model model, View view) {
+    JMenuBar bar = new JMenuBar();
+
+    JMenu file = new JMenu("File");
+
+    JMenuItem save = new JMenuItem("Save XML");
+    save.addActionListener(e -> {
+        try {
+            JFileChooser chooser = new JFileChooser();
+            if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                model.saveToXML(chooser.getSelectedFile());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    });
+
+    JMenuItem load = new JMenuItem("Load XML");
+    load.addActionListener(e -> {
+        try {
+            JFileChooser chooser = new JFileChooser();
+            if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                model.loadFromXML(chooser.getSelectedFile());
+                view.repaint();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    });
+
+    file.add(save);
+    file.add(load);
+    bar.add(file);
+
+    return bar;
+}
+
+
+
+
+
 }
