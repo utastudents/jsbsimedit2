@@ -1,0 +1,53 @@
+﻿REQUIREMENTS SPECIFICATION
+1. REQUIREMENT DOCUMENTATION
+   1.1. Any and all requirements will be documented into excel.
+   1.2. Requirements will be separated by rows.
+   1.3. Requirements will follow this specific column structure:
+       | REQUIREMENT ID | URGENCY | DESCRIPTION | STATUS |
+2. REQUIREMENT ID FORMAT
+   2.1. ID Structure
+        * ALL requirement IDs must be in the following format: [TYPE] - [SUBTYPE] - [NUMBER]
+   2.2. ID Definitions
+        2.2.1. TYPE
+               * [UI] : User Interface Requirement
+               * [SYS] : System Level Requirement
+               * [SW] : Software Requirement
+        2.2.2. SUBTYPE
+               *Subtypes should be a 3 letter abbreviation of the section of requirements within the XML file.
+        2.2.3. NUMBER
+               * Sequential THREE digit number starting from [000]
+                 IF there is a sub-requirement of an existing requirement:
+                 *001-01
+                 *003-02
+   2.3. EXAMPLE REQUIREMENT IDs
+         * SYS-YAW-0012
+         * SYS-MEN-021
+3. URGENCY SPECIFACATION
+   3.1. Requirements will be given a priority rating.
+        3.1.1. There are three levels of urgency: High | Mid | Low
+        3.1.2. Each urgency level will have a corresponding cell color, and will be sorted by High to Low priority.
+   3.2. HIGH Urgency : MUST HAVE
+        3.2.1. The requirement is essential to the core of the program.
+        3.2.2. If the requirement is not fulfilled, the application will not function.
+        3.2.3. RED Cell color.
+   3.3. Mid Urgency : SHOULD HAVE
+        3.3.1. Features that users expect to have.
+        3.3.2. Major functionalities that should be added once the application is functional.
+        3.3.3. YELLOW Cell color.
+   3.4. Low Urgency : WANT TO HAVE
+        3.4.1. Features that the users want to improve upon.
+        3.4.2. Quality of Life changes that will be added once the application  is near completion.
+        3.4.3. Not core to user experience or functionality.
+        3.4.4. GREEN Cell Color.
+4. DESCRIPTION SPECIFICATION
+   4.1. Requirements will be documented with a brief and precise description of what the requirement is expecting.
+   4.2. Description should not be longer than 1 sentence.
+   4.3. DESCRIPTION EXAMPLE
+        | UI-MAIN-0005 | HIGH | Application will close when pressing quit in main window | Incomplete |
+5. STATUS SPECIFICATION
+   5.1. Requirement status will be updated periodically.
+   5.2. Requirements will have 2 possible status.
+        5.2.1. Complete-Requirement has been fulfilled by the team.
+        5.2.2. Incomplete-Requirement is waiting to be fulfilled.
+ 
+

@@ -1,0 +1,24 @@
+(These sources may be used in order to effectively collect and write requirements.)
+
+_JSB_Related_Programs__________________________________________________
+
+	-Current JSBSim Commander Program (zip file in the Prototyping 
+assignment on canvas https://uta.instructure.com/courses/252641/assignments/2130945)
+
+	-Current JSBSim GitHub Rep (https://github.com/JSBSim-Team/jsbsim)
+
+_XML_Files_____________________________________________________________
+
+	-Current xml schema 
+(https://github.com/JSBSim-Team/jsbsim/blob/master/JSBSim.xsd)
+
+	-Current F16 xml to compare the new xml format to the old 
+(https://github.com/JSBSim-Team/jsbsim/blob/master/aircraft/f16/f16.xml)
+
+_Formatting_____________________________________________________________
+
+	-Our UI Requirements Format (the format should be located in the same directory as this 
+Design Criteria file)
+
+	-Our Requirements Excel Format (the format should be located in the same directory as 
+this Design Criteria file)
