@@ -90,6 +90,21 @@ public class PropulsionTab extends simpleTab
         panel.add(tabbedPane, BorderLayout.CENTER);
     }
 
+    private String extractModelName(String display) 
+        {
+            if (display == null) {
+                return "";
+            }
+
+            int open = display.indexOf('(');
+            int close = display.indexOf(')', open + 1);
+
+            if (open >= 0 && close > open) {
+                return display.substring(open + 1, close).trim();
+            }
+
+            return display.trim();
+        }
 
 
 
@@ -262,19 +277,40 @@ public void loadData()
     // New Pair
     btnNewPair.addActionListener(e -> 
     {
-        String eName = enginesList.getSelectedValue() != null ? enginesList.getSelectedValue() : "";
-        String tName = thrustersList.getSelectedValue() != null ? thrustersList.getSelectedValue() : "";
+       
+        String eName = enginesList.getSelectedValue();
+        String tName = thrustersList.getSelectedValue();
 
-        if (!eName.isEmpty() && !tName.isEmpty())
-        {
-            String pair = eName + " + " + tName;
-            subscribedModel.addElement(pair);
+        
+        if (eName == null || tName == null || eName.isEmpty() || tName.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                panel,
+                "Select both an engine and a thruster to create a pair."
+            );
+            return;
         }
-        else 
-        {
-            JOptionPane.showMessageDialog(panel,"Select both an engine and a thruster to create a pair.");
+
+        
+        String eModel = extractModelName(eName);
+        String tModel = extractModelName(tName);
+
+        if (!eModel.equals(tModel)) {
+            JOptionPane.showMessageDialog(
+                panel,
+                "Cannot create pair.\n"
+            + "Engine model (" + eModel + ") does NOT match "
+            + "Thruster model (" + tModel + ").",
+                "Model mismatch",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return; // don't add the pair
         }
+
+        // Models match add the pair
+        String pair = eName + " + " + tName;
+        subscribedModel.addElement(pair);
     });
+
 
     btnDelPair.addActionListener(e -> 
     {
