@@ -552,7 +552,18 @@ private void showTankEditDialog(Tank tank, int tankIndex)
             tank.getContents().setUnit(generated.MassUnit.fromValue((String) contentsUnitCombo.getSelectedItem()));
 
             // Refresh the display
-            loadData();
+            
+            String locStr = "(" + tank.getLocation().getX() + ", " +
+                      tank.getLocation().getY() + ", " +
+                      tank.getLocation().getZ() + ") " +
+                      tank.getLocation().getUnit();
+
+            String capStr = tank.getCapacity().getValue() + " " + tank.getCapacity().getUnit();
+
+            String updatedText = "Tank (" + tank.getType() + ") location=" +
+                                locStr + " capacity=" + capStr;
+
+            tanksModel.set(tankIndex, updatedText);
 
             dialog.dispose();
         }
