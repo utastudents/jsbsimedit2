@@ -3,6 +3,7 @@ package uta.cse3310.tab.concreteTabs;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.Stack;
 import java.util.ArrayList;
 import uta.cse3310.tab.simpleTab;
 import uta.cse3310.dataStore;
@@ -27,6 +28,7 @@ public class PropulsionTab extends simpleTab
     private DefaultListModel<String> subscribedModel;
     private DefaultListModel<String> tanksModel;
     private JList<String> tanksList;
+    private Stack<Runnable> undoStack = new Stack<>();
 
     public PropulsionTab(tabFrame tf, dataStore ds, String label) 
     {
@@ -141,6 +143,14 @@ public class PropulsionTab extends simpleTab
                 }
     }
 
+    private void undoLastAction() {
+        if (!undoStack.isEmpty()) {
+            undoStack.pop().run();
+            loadData(); // refresh UI
+        } else {
+            JOptionPane.showMessageDialog(panel, "Nothing to undo.");
+        }
+    }
 
 
 
@@ -148,6 +158,7 @@ public class PropulsionTab extends simpleTab
     @Override
     public void loadData() 
     {
+            
             panel.removeAll();
             panel.setLayout(null);
 
@@ -197,6 +208,7 @@ public class PropulsionTab extends simpleTab
                     {
                         String pair = ((String) obj).substring(5).trim(); // remove "PAIR:" prefix
                         subscribedModel.addElement(pair);
+                        
                     }
 
                     else if (obj instanceof Tank)  
@@ -291,9 +303,18 @@ public class PropulsionTab extends simpleTab
             btnDetailTank.setBounds(620, 385, 120, 25);
             panel.add(btnDetailTank);
 
+            // undo button
+
+            JButton btnUndo = new JButton("Undo");
+            btnUndo.setBounds(750, 385, 100, 25);
+            panel.add(btnUndo);
+
+            btnUndo.addActionListener(e -> undoLastAction());
+
+
             // SAVE BUTTON
             JButton btnSave = new JButton("Save");
-            btnSave.setBounds(750, 385, 100, 25);
+            btnSave.setBounds(860, 385, 100, 25);
             panel.add(btnSave);
 
             btnSave.addActionListener(e -> savePropulsionToXML());
@@ -341,6 +362,7 @@ public class PropulsionTab extends simpleTab
                         {
                         String pair = eName + " + " + tName;
                         subscribedModel.addElement(pair);
+                        undoStack.push(() -> subscribedModel.removeElement(pair));
                     } else {
                         JOptionPane.showMessageDialog(panel, "Select both an engine and a thruster to create a pair.");
                     }
@@ -352,6 +374,7 @@ public class PropulsionTab extends simpleTab
                 {
                     String selected = subList.getSelectedValue();
                     if (selected != null) {
+                        undoStack.push(() -> subscribedModel.addElement(selected));
                         subscribedModel.removeElement(selected);
                     }
                 });
@@ -411,18 +434,50 @@ public class PropulsionTab extends simpleTab
                 newTank.setCapacity(capacity);
 
                 DS.cfg.getPropulsion().getDocumentationOrPropertyOrFunction().add(newTank);
+                undoStack.push(() -> {
+                    DS.cfg.getPropulsion().getDocumentationOrPropertyOrFunction().remove(newTank);
+                });
 
                 String locStr = "(" + xField.getText().trim() + ", " + yField.getText().trim() + ", " + zField.getText().trim() + ") " + locUnit;
-                String text = "Tank: " + type + " location: " + locStr + " capacity: " + capField.getText().trim() + " " + capUnit;
+                String text = "Tank (" + type + ") location=" + locStr + " capacity=" + capField.getText().trim() + " " + capUnit;
                 tanksModel.addElement(text);
             }
         });
 
             btnDelTank.addActionListener(e -> {
                     String selected = tanksList.getSelectedValue();
-                    if (selected != null) {
-                        tanksModel.removeElement(selected);
+                    int idx = tanksList.getSelectedIndex();
+                    if (idx == -1) return;
+
+                    // find Tank object in DS.cfg
+                    Tank deletedTank = null;
+                    int counter = 0;
+                    for (Object obj : DS.cfg.getPropulsion().getDocumentationOrPropertyOrFunction()) {
+                        if (obj instanceof Tank) {
+                            if (counter == idx) {
+                                deletedTank = (Tank) obj;
+                                break;
+                            }
+                            counter++;
+                        }
                     }
+
+                    if (deletedTank != null) {
+
+                        Tank finalTank = deletedTank;
+
+                        // UNDO: add tank back
+                        undoStack.push(() -> {
+                            DS.cfg.getPropulsion().getDocumentationOrPropertyOrFunction().add(finalTank);
+                        });
+
+                        // remove from XML data
+                        DS.cfg.getPropulsion().getDocumentationOrPropertyOrFunction().remove(deletedTank);
+
+                        // remove from list model
+                        tanksModel.remove(idx);
+                    }
+
                     });
 
             btnDetailTank.addActionListener(e -> {
@@ -526,6 +581,30 @@ public class PropulsionTab extends simpleTab
                 {
                     try 
                         {
+                            Tank oldCopy = new Tank();
+                            oldCopy.setType(tank.getType());
+
+                            generated.Location oldLoc = new generated.Location();
+                            oldLoc.setX(tank.getLocation().getX());
+                            oldLoc.setY(tank.getLocation().getY());
+                            oldLoc.setZ(tank.getLocation().getZ());
+                            oldLoc.setUnit(tank.getLocation().getUnit());
+                            oldCopy.setLocation(oldLoc);
+
+                            Mass oldCap = new Mass();
+                            oldCap.setValue(tank.getCapacity().getValue());
+                            oldCap.setUnit(tank.getCapacity().getUnit());
+                            oldCopy.setCapacity(oldCap);
+
+                            undoStack.push(() -> {
+                                tank.setType(oldCopy.getType());
+                                tank.getLocation().setX(oldCopy.getLocation().getX());
+                                tank.getLocation().setY(oldCopy.getLocation().getY());
+                                tank.getLocation().setZ(oldCopy.getLocation().getZ());
+                                tank.getLocation().setUnit(oldCopy.getLocation().getUnit());
+                                tank.getCapacity().setValue(oldCopy.getCapacity().getValue());
+                                tank.getCapacity().setUnit(oldCopy.getCapacity().getUnit());
+                            });
                             tank.setType(typeField.getText());
 
                             if (tank.getLocation() == null) tank.setLocation(new generated.Location());
@@ -594,6 +673,7 @@ public class PropulsionTab extends simpleTab
                 int idx = subscribedModel.indexOf(pair);
                 if (idx >= 0) 
                     {
+                        undoStack.push(() -> subscribedModel.set(idx, pair));  // pair = old one
                         subscribedModel.set(idx, newPair);
                     }
             }
